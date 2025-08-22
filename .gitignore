@@ -18,10 +18,12 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -31,7 +33,187 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
+.packages
+.pub-cache/
+.pub/
 /build/
+
+# Web related
+.web_compiled/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/gradle
+**/gradlew
+**/gradlew.bat
+**/local.properties
+**/GeneratedPluginRegistrant.java
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+**/android/app/src/main/res/values/strings.xml
+**/android/app/google-services.json
+**/android/app/google-services-dev.json
+**/android/app/google-services-prod.json
+
+# iOS
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/App.framework/
+**/ios/Flutter/Flutter.framework/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Podfile.lock
+**/ios/Runner.xcodeproj/project.xcworkspace/
+**/ios/Runner.xcodeproj/xcuserdata/
+
+# macOS
+**/macos/Flutter/Flutter-Output/
+**/macos/Flutter/Flutter.podspec
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+**/macos/.symlinks/
+**/macos/.generated/
+**/macos/Flutter/Flutter.podspec
+**/macos/Flutter/FlutterMacOS.framework/
+**/macos/Flutter/GeneratedPluginRegistrant.h
+**/macos/Flutter/GeneratedPluginRegistrant.m
+**/macos/Flutter/ephemeral/
+**/macos/Runner/DerivedData/
+**/macos/Runner/Pods/
+**/macos/Runner/tmp/
+
+# Windows
+**/windows/flutter/
+**/windows/runner/
+
+# Linux
+**/linux/flutter/
+**/linux/runner/
+
+# Firebase
+**/firebase-debug.log
+**/firebase-debug.*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local development files
+*.swp
+*.swo
+*~
+
+# IDE specific files
+.idea/
+.vs/
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ncrunchsolution
+*.ncrunchproject
+*.ncrunchproject.user
+*.ReSharper
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+_ReSharper*/
+
+# Coverage directory
+coverage/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local development files
+*.sass-cache/
+*.tmp
+*.tmp.*
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/readme.md
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Android Studio
+.idea/
+.gradle/
+build/
+local.properties
+*.iml
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
+
+# IntelliJ
+out/
+.idea_modules/
+*.iws
+*.ipr
+*~
+*.swp
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Flutter/Dart
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Web related
+.web_compiled/
 
 # Symbolication related
 app.*.symbols
