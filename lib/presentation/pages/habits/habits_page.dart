@@ -13,6 +13,7 @@ import 'widgets/habit_details_dialog.dart';
 import '../../../settings.dart';
 import 'add_habit_page.dart';
 import 'habit_progress_page.dart';
+import '../history/history_page.dart';
 // import '../statistics/statistics_page.dart';
 
 class HabitsPage extends StatefulWidget {
@@ -43,6 +44,24 @@ class _HabitsPageState extends State<HabitsPage> {
         _scheduleRecenter();
       }
     });
+  }
+
+  bool _isHabitActiveForDate(Habit habit, DateTime date) {
+    final String freq = (habit.frequency ?? '').trim();
+    if (freq.isEmpty) return true; // default active if not specified
+    final int weekday = date.weekday; // 1 = Mon, ... 7 = Sun
+    switch (freq.toLowerCase()) {
+      case 'daily':
+        return true;
+      case 'weekly':
+        return true; // always visible as per requirement
+      case 'weekdays':
+        return weekday >= DateTime.monday && weekday <= DateTime.friday;
+      case 'weekends':
+        return weekday == DateTime.saturday || weekday == DateTime.sunday;
+      default:
+        return true; // unknown values -> keep active
+    }
   }
 
   @override
@@ -110,6 +129,8 @@ class _HabitsPageState extends State<HabitsPage> {
         case 1:
           return AddHabitPage();
         case 2:
+          return HistoryPage();
+        case 3:
           return SettingsScreen();
         default:
           return Container();
@@ -213,9 +234,12 @@ class _HabitsPageState extends State<HabitsPage> {
           ...items.map((habit) => Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Builder(
-                  builder: (ctx) => Dismissible(
+                  builder: (ctx) {
+                    final bool isActive = _isHabitActiveForDate(habit, _selectedDate);
+                    final bool isDisabled = !isActive;
+                    return Dismissible(
                     key: Key('${title.toLowerCase().replaceAll(' ', '_')}_${habit.id}'),
-                    direction: DismissDirection.startToEnd,
+                    direction: isDisabled ? DismissDirection.none : DismissDirection.startToEnd,
                     background: Container(
                       decoration: BoxDecoration(
                         color: Colors.red.withOpacity(0.15),
@@ -256,10 +280,12 @@ class _HabitsPageState extends State<HabitsPage> {
                     },
                     child: HabitCard(
                       habit: habit,
-                      onTap: () => _openHabitCalendar(habit),
+                      disabled: isDisabled,
+                      onTap: isDisabled ? null : () => _openHabitCalendar(habit),
                       onToggle: (value) => _toggleHabitCompletion(habit, value),
                     ),
-                  ),
+                  );
+                  },
                 ),
               )),
           const SizedBox(height: 12),
@@ -302,6 +328,11 @@ class _HabitsPageState extends State<HabitsPage> {
               label: 'Add',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.history_outlined),
+              activeIcon: Icon(Icons.history),
+              label: 'History',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               activeIcon: Icon(Icons.person),
               label: 'Profile',
@@ -341,10 +372,10 @@ class _HabitsPageState extends State<HabitsPage> {
           final isToday = date.year == today.year && date.month == today.month && date.day == today.day;
           final isSelected = date.year == _selectedDate.year && date.month == _selectedDate.month && date.day == _selectedDate.day;
 
-          // Overall progress ring: average of all habits' overall progress (0-100)
-          final habits = _habitController.habits;
-          final count = habits.length;
-          final totalProgress = habits.fold<int>(0, (sum, h) => sum + (h.progress.clamp(0, 100)));
+          // Overall progress ring: average of ACTIVE (unfaded) habits' progress (0-100)
+          final habitsForDate = _habitController.habits.where((h) => _isHabitActiveForDate(h, date)).toList();
+          final count = habitsForDate.length;
+          final totalProgress = habitsForDate.fold<int>(0, (sum, h) => sum + (h.progress.clamp(0, 100)));
           final progress = count == 0 ? 0.0 : (totalProgress / (count * 100)).clamp(0.0, 1.0);
 
           if (isToday && !_didScrollToToday) {

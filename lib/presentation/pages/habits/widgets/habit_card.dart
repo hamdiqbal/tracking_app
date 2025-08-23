@@ -5,14 +5,16 @@ import '../../../../data/models/habit_model.dart';
 
 class HabitCard extends StatelessWidget {
   final Habit habit;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Function(bool) onToggle;
+  final bool disabled;
 
   const HabitCard({
     Key? key,
     required this.habit,
-    required this.onTap,
+    this.onTap,
     required this.onToggle,
+    this.disabled = false,
   }) : super(key: key);
 
   @override
@@ -20,25 +22,31 @@ class HabitCard extends StatelessWidget {
     final Color categoryColor = _categoryColor(habit.category);
     final Brightness brightness = ThemeData.estimateBrightnessForColor(categoryColor);
     final Color onColor = brightness == Brightness.dark ? Colors.white : Colors.black;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      color: categoryColor, // exact category color as requested
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(32),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(32),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              _buildIcon(),
-              const SizedBox(width: 16),
-              _buildHabitInfo(),
-              const Spacer(),
-              _buildProgressBar(),
-            ],
+    return Opacity(
+      opacity: disabled ? 0.4 : 1.0,
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 8),
+        color: categoryColor, // exact category color as requested
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(32),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: disabled ? null : onTap,
+            borderRadius: BorderRadius.circular(32),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  _buildIcon(),
+                  const SizedBox(width: 16),
+                  _buildHabitInfo(),
+                  const Spacer(),
+                  _buildProgressBar(),
+                ],
+              ),
+            ),
           ),
         ),
       ),

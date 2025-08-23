@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_controller.dart';
 import '../../data/models/habit_model.dart';
 import '../../data/models/habit_progress_model.dart';
+import '../../data/models/history_entry.dart';
 import '../../data/services/firebase_service.dart';
 import '../../data/constants/predefined_habits.dart';
 import '../../presentation/widgets/app_snackbar.dart';
@@ -22,6 +23,7 @@ class HabitController extends GetxController {
   final Rx<DateTime> selectedDate = DateTime.now().obs;
   final RxMap<String, List<HabitProgress>> habitProgressMap = <String, List<HabitProgress>>{}.obs;
   final RxMap<String, Map<String, dynamic>> habitStatsMap = <String, Map<String, dynamic>>{}.obs;
+  final RxList<HistoryEntry> historyEntries = <HistoryEntry>[].obs;
 
   @override
   void onInit() {
@@ -29,10 +31,12 @@ class HabitController extends GetxController {
     loadHabits();
     _setupHabitsListener();
     _runMigration();
+    _loadHistoryAndPrune();
     // Re-subscribe when auth state changes so we switch from anonymous to real UID
     _authSub = _authController.authStateChanges.listen((_) {
       _setupHabitsListener();
       loadHabits();
+      _loadHistoryAndPrune();
     });
   }
 
@@ -105,7 +109,26 @@ class HabitController extends GetxController {
   // Delete a habit
   Future<bool> deleteHabit(String id) async {
     try {
-      return await _firebaseService.deleteHabit(id);
+      // Fetch habit to create history entry
+      final habit = await _firebaseService.getHabitById(id);
+      if (habit != null) {
+        final entry = HistoryEntry(
+          id: '${habit.id}_${DateTime.now().millisecondsSinceEpoch}',
+          habitId: habit.id,
+          title: habit.title,
+          category: habit.category,
+          startDate: habit.createdAt,
+          endDate: DateTime.now(),
+          userId: _firebaseService.currentUserId,
+        );
+        await _firebaseService.addHistoryEntry(entry);
+      }
+
+      final ok = await _firebaseService.deleteHabit(id);
+      if (ok) {
+        await _loadHistoryAndPrune();
+      }
+      return ok;
     } catch (e) {
       showTopSnack('Error', 'Failed to delete habit: ${e.toString()}', type: SnackType.error);
       return false;
@@ -170,6 +193,20 @@ class HabitController extends GetxController {
     try {
       await _firebaseService.migrateExactFields();
     } catch (_) {}
+  }
+
+  Future<void> _loadHistoryAndPrune() async {
+    try {
+      // prune first
+      await _firebaseService.pruneHistoryOlderThan30Days();
+      // then load
+      final entries = await _firebaseService.getLast30DaysHistory();
+      historyEntries.assignAll(entries);
+    } catch (_) {}
+  }
+
+  Future<void> refreshHistory() async {
+    await _loadHistoryAndPrune();
   }
 
   // Get habits for a specific day of the week

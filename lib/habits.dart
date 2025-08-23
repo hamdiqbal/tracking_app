@@ -99,6 +99,11 @@ class _HabitsScreenState extends State<HabitsScreen> {
               label: 'Calendar',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.history_outlined),
+              activeIcon: Icon(Icons.history),
+              label: 'History',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               activeIcon: Icon(Icons.person),
               label: 'Profile',
@@ -125,6 +130,8 @@ class _HabitsScreenState extends State<HabitsScreen> {
       case 2:
         return CalenderScreen();
       case 3:
+        return _buildHistoryScreen();
+      case 4:
         return SettingsScreen();
       default:
         return _buildHomeScreen();
@@ -251,6 +258,39 @@ class _HabitsScreenState extends State<HabitsScreen> {
                     ),
                   );
                 },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryScreen() {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'History',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 16),
+            Expanded(
+              child: Center(
+                child: Text(
+                  'No history yet',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF718096),
+                  ),
+                ),
               ),
             ),
           ],

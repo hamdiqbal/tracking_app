@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import '../models/habit_model.dart';
 import '../models/habit_progress_model.dart';
+import '../models/history_entry.dart';
 
 class FirebaseService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -16,6 +17,9 @@ class FirebaseService extends GetxService {
   
   CollectionReference get progressCollection => 
       _firestore.collection('users').doc(currentUserId).collection('progress');
+
+  CollectionReference get historyCollection =>
+      _firestore.collection('users').doc(currentUserId).collection('history');
 
   // HABIT OPERATIONS
   
@@ -299,6 +303,57 @@ class FirebaseService extends GetxService {
 
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  // HISTORY OPERATIONS
+
+  /// Add a history entry
+  Future<bool> addHistoryEntry(HistoryEntry entry) async {
+    try {
+      await historyCollection.doc(entry.id).set(entry.toJson());
+      return true;
+    } catch (e) {
+      throw Exception('Failed to add history entry: $e');
+    }
+  }
+
+  /// Get last 30 days of history entries
+  Future<List<HistoryEntry>> getLast30DaysHistory() async {
+    try {
+      final endDate = DateTime.now();
+      final startDate = endDate.subtract(const Duration(days: 30));
+      final snapshot = await historyCollection
+          .where('endDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+          .orderBy('endDate', descending: true)
+          .get();
+      return snapshot.docs
+          .map((doc) => HistoryEntry.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to get history: $e');
+    }
+  }
+
+  /// Delete history entries older than 30 days (prune)
+  Future<int> pruneHistoryOlderThan30Days() async {
+    int deleted = 0;
+    try {
+      final cutoff = DateTime.now().subtract(const Duration(days: 30));
+      final snapshot = await historyCollection
+          .where('endDate', isLessThan: Timestamp.fromDate(cutoff))
+          .get();
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+        deleted++;
+      }
+      if (deleted > 0) {
+        await batch.commit();
+      }
+      return deleted;
+    } catch (e) {
+      throw Exception('Failed to prune history: $e');
+    }
   }
 
   // REAL-TIME LISTENERS
