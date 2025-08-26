@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -59,4 +56,14 @@ class DefaultFirebaseOptions {
     projectId: 'habit-tracking-app-511a1',
     storageBucket: 'habit-tracking-app-511a1.firebasestorage.app',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDMm18EMleZCwB9hSinLq234mtByaFl76s',
+    appId: '1:1090637825780:ios:113c2d6fd716873486c0a1',
+    messagingSenderId: '1090637825780',
+    projectId: 'habit-tracking-app-511a1',
+    storageBucket: 'habit-tracking-app-511a1.firebasestorage.app',
+    iosBundleId: 'com.hamd.habitTracking',
+  );
+
 }

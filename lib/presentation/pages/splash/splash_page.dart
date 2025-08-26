@@ -14,23 +14,28 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    // Route based on auth state
-    final auth = Get.find<AuthController>();
-    auth.authStateChanges.listen((user) {
-      if (!mounted) return;
-      if (user == null) {
-        Get.offAllNamed(AppRoutes.signIn);
-      } else {
-        Get.offAllNamed(AppRoutes.home);
-      }
-    });
+    // Route based on auth state (tolerate missing Firebase on iOS)
+    try {
+      final auth = Get.find<AuthController>();
+      auth.authStateChanges.listen((user) {
+        if (!mounted) return;
+        if (user == null) {
+          Get.offAllNamed(AppRoutes.signIn);
+        } else {
+          Get.offAllNamed(AppRoutes.home);
+        }
+      });
+    } catch (_) {
+      // If Firebase/Auth isn't ready, move to Sign In so the app doesn't stall
+      Future.microtask(() => Get.offAllNamed(AppRoutes.signIn));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Container(
+      body: SafeArea(child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -109,7 +114,7 @@ class _SplashPageState extends State<SplashPage> {
               ),
               SizedBox(height: 16),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Build better habits and achieve your goals with our easy-to-use habit tracker.',
                   textAlign: TextAlign.center,
@@ -123,7 +128,7 @@ class _SplashPageState extends State<SplashPage> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }

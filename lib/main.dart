@@ -11,7 +11,7 @@ import 'core/services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase
+  // Initialize Firebase with generated options (all platforms configured)
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -19,11 +19,11 @@ void main() async {
   // Initialize SharedPreferences
   await Get.putAsync(() => SharedPreferences.getInstance());
   
-  // Initialize Notification Service (creates channel, prepares plugin)
-  await NotificationService().initialize();
-  
-  // Run the app
+  // Run the app first, then initialize notification service
   runApp(MyApp());
+  
+  // Initialize Notification Service after app is running
+  NotificationService().initialize();
 }
 
 class MyApp extends StatelessWidget {

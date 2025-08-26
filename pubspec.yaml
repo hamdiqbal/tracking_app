@@ -77,9 +77,6 @@ flutter:
   # Assets
   assets:
     - assets/images/
-    - assets/animations/
-    - assets/icons/
-    - assets/fonts/
   
   # Fonts
   # You can add custom fonts later by uncommenting and configuring this section

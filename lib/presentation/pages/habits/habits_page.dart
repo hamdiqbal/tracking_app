@@ -10,7 +10,7 @@ import '../../../logic/controllers/app_controller.dart';
 import '../../../logic/controllers/auth_controller.dart';
 import 'widgets/habit_card.dart';
 import 'widgets/habit_details_dialog.dart';
-import '../../../settings.dart';
+import '../settings/settings_page.dart';
 import 'add_habit_page.dart';
 import 'habit_progress_page.dart';
 import '../history/history_page.dart';
@@ -131,7 +131,7 @@ class _HabitsPageState extends State<HabitsPage> {
         case 2:
           return HistoryPage();
         case 3:
-          return SettingsScreen();
+                        return SettingsPage();
         default:
           return Container();
       }
@@ -168,7 +168,7 @@ class _HabitsPageState extends State<HabitsPage> {
         ),
         IconButton(
           icon: const Icon(Icons.settings, color: AppColors.textPrimary),
-          onPressed: () => Get.to(() => SettingsScreen()),
+                        onPressed: () => Get.to(() => SettingsPage()),
         ),
       ],
     );
