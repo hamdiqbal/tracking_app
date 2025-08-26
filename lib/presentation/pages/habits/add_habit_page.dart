@@ -81,11 +81,9 @@ class _AddHabitPageState extends State<AddHabitPage> {
           child: SingleChildScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             padding: EdgeInsets.only(
-              left: 24,
-              right: 24,
-              top: 24,
+              top: 16,
               // Add bottom inset to avoid overflow when keyboard is visible
-              bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

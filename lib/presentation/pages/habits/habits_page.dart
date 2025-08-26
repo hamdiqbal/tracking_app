@@ -102,6 +102,7 @@ class _HabitsPageState extends State<HabitsPage> {
     });
     return Scaffold(
       backgroundColor: AppColors.background,
+      extendBody: true,
       body: _buildBody(),
       // Removed FAB to match header + icon add pattern
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -114,13 +115,14 @@ class _HabitsPageState extends State<HabitsPage> {
       switch (index) {
         case 0:
           return SafeArea(
+            bottom: false,
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 12),
                   _buildHabitsList(),
                 ],
               ),
@@ -228,11 +230,11 @@ class _HabitsPageState extends State<HabitsPage> {
         if (items.isEmpty) return [];
         return [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
             child: Text(title, style: AppTextStyles.heading3.copyWith(color: AppColors.textPrimary)),
           ),
           ...items.map((habit) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
                 child: Builder(
                   builder: (ctx) {
                     final bool isActive = _isHabitActiveForDate(habit, _selectedDate);
@@ -443,19 +445,19 @@ class _HabitsPageState extends State<HabitsPage> {
                         height: 34,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.surface,
+                          color: isToday ? AppColors.primary : AppColors.surface,
                           border: Border.all(
-                            color: isSelected
+                            color: isToday
                                 ? AppColors.primary
-                                : (isToday ? AppColors.primary : AppColors.border),
-                            width: isSelected ? 2 : 1,
+                                : (isSelected ? AppColors.primary : AppColors.border),
+                            width: isSelected && !isToday ? 2 : 1,
                           ),
                         ),
                         alignment: Alignment.center,
                         child: Text(
                           '${date.day}',
                           style: TextStyle(
-                            color: AppColors.textPrimary,
+                            color: isToday ? Colors.white : AppColors.textPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                           ),
